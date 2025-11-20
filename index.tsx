@@ -465,13 +465,48 @@ ${query}
         <div className="flex-1 overflow-y-auto p-8 pt-0">
           <div className="max-w-4xl mx-auto w-full pb-20">
             
-            {!results && !loading && (
+            {!results && !loading && !dataset && (
               <div className="flex flex-col items-center justify-center h-64 text-center text-gray-400">
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                   <TableIcon size={32} className="opacity-50" />
                 </div>
-                <p>Upload data and run a query to see results here.</p>
+                <p>Upload data to get started.</p>
               </div>
+            )}
+
+            {!results && !loading && dataset && (
+               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden animate-in fade-in slide-in-from-bottom-4">
+                 <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                   <h3 className="font-semibold text-gray-800 flex items-center">
+                     <Database size={18} className="mr-2 text-indigo-600"/> Data Preview
+                   </h3>
+                   <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded border border-gray-200">
+                     First 20 of {dataset.data.length.toLocaleString()} rows
+                   </span>
+                 </div>
+                 <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left">
+                        <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b">
+                          <tr>
+                            {dataset.columns.map((col) => (
+                              <th key={col} className="px-6 py-3 font-medium tracking-wider whitespace-nowrap">{col}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                          {dataset.data.slice(0, 20).map((row: Row, i: number) => (
+                            <tr key={i} className="hover:bg-indigo-50/50 transition-colors">
+                              {dataset.columns.map((col) => (
+                                <td key={`${i}-${col}`} className="px-6 py-3 text-gray-700 whitespace-nowrap max-w-xs truncate" title={String(row[col] ?? '')}>
+                                  {String(row[col] ?? '')}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                 </div>
+               </div>
             )}
 
             {loading && (
@@ -510,8 +545,8 @@ ${query}
                           {results.data.map((row: Row, i: number) => (
                             <tr key={i} className="hover:bg-indigo-50/50 transition-colors">
                               {dataset && dataset.columns.map((col) => (
-                                <td key={`${i}-${col}`} className="px-6 py-3 text-gray-700 whitespace-nowrap max-w-xs truncate" title={String(row[col])}>
-                                  {String(row[col])}
+                                <td key={`${i}-${col}`} className="px-6 py-3 text-gray-700 whitespace-nowrap max-w-xs truncate" title={String(row[col] ?? '')}>
+                                  {String(row[col] ?? '')}
                                 </td>
                               ))}
                             </tr>
